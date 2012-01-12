@@ -8,8 +8,9 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
-import org.bukkit.event.Listener;
 import org.bukkit.event.Event.Priority;
+import org.bukkit.event.Listener;
+
 import de.bananaco.bpermissions.api.World;
 import de.bananaco.bpermissions.api.WorldManager;
 import de.bananaco.bpermissions.api.util.Calculable;
@@ -119,26 +120,32 @@ public class Permissions extends de.bananaco.permissions.Permissions {
 			if(args.length > 2)
 				world = args[2];
 			// Check for permission
-			if(!has(sender, "tracks."+name)) {
-				sendMessage(sender, "You don't have permission to use promotion tracks!");
-				return true;
-			}
 			if(command.getName().equalsIgnoreCase("promote")) {
-				PromotionTrack track = config.getPromotionTrack();
-				if(track.containsTrack(name)) {
-					track.promote(player, name, world);
-					sendMessage(sender, "Promoted along the track: "+name+" in "+(world==null?"all worlds":"world: "+world));
+				if (!has(sender, "tracks."+name+".promote")) {
+					sendMessage(sender, "You don't have permission to use promotion tracks!");
+					return true;
 				} else {
-					sendMessage(sender, "That track ("+name+") does not exist");
+					PromotionTrack track = config.getPromotionTrack();
+					if(track.containsTrack(name)) {
+						track.promote(player, name, world);
+						sendMessage(sender, "Promoted along the track: "+name+" in "+(world==null?"all worlds":"world: "+world));
+					} else {
+						sendMessage(sender, "That track ("+name+") does not exist");
+					}
 				}
 			}
 			else if(command.getName().equalsIgnoreCase("demote")) {
-				PromotionTrack track = config.getPromotionTrack();
-				if(track.containsTrack(name)) {
-					track.demote(player, name, world);
-					sendMessage(sender, "Demoted along the track: "+name+" in "+(world==null?"all worlds":"world: "+world));
+				if (!has(sender, "tracks."+name+".demote")) {
+					sendMessage(sender, "You don't have permission to use demotion tracks!");
+					return true;
 				} else {
-					sendMessage(sender, "That track ("+name+") does not exist");
+					PromotionTrack track = config.getPromotionTrack();
+					if(track.containsTrack(name)) {
+						track.demote(player, name, world);
+						sendMessage(sender, "Demoted along the track: "+name+" in "+(world==null?"all worlds":"world: "+world));
+					} else {
+						sendMessage(sender, "That track ("+name+") does not exist");
+					}
 				}
 			}
 			return true;
